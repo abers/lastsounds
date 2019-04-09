@@ -1,3 +1,4 @@
+import configparser
 import requests
 from bs4 import BeautifulSoup
 import pylast
@@ -7,10 +8,13 @@ import datetime
 now = datetime.datetime.now()
 unixtimenow = time.mktime(now.timetuple())
 
-API_KEY = ""
-API_SECRET = ""
-username = "
-password_hash = pylast.md5("")
+config = configparser.ConfigParser()
+config.read('.details')
+
+API_KEY = config['API']['API_KEY']
+API_SECRET = config['API']['API_SECRET']
+username = config['LOGIN']['username']
+password_hash = pylast.md5(config['LOGIN']['password'])
 
 network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET,
                                username=username, password_hash=password_hash)
