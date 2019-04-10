@@ -6,3 +6,12 @@ Either use pipenv to install dependencies, or pip install pylast, bs4, and color
 Rename details_config and add an API key & secret along with your username. An API key & secret can be created at www.last.fm/api/account/create. 
 
 Then run with python3 and paste url to the episode from BBC Sounds you want to scrobble.
+
+## To do
+
+- [ ] Add proper README
+- [ ] Switch from username / password to SessionKeyGenerator
+- [ ] Add command line arguments
+- [ ] Add option to check / correct each track
+- [ ] Add options for estimating / inputing track length
+
