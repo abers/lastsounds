@@ -51,7 +51,7 @@ if __name__ == "__main__":
     for artist, track in zip(artists, tracks):
         scrobble_text = Fore.LIGHTYELLOW_EX + 'Scrobbling: '
         artist_text = Fore.LIGHTBLUE_EX + artist.get_text()
-        track_text = Fore.LIGHTGREEN_EX + artist.get_text() + Style.RESET_ALL
+        track_text = Fore.LIGHTGREEN_EX + track.get_text() + Style.RESET_ALL
         separator = Fore.LIGHTMAGENTA_EX + " - "
         print(scrobble_text, artist_text, separator, track_text)
         network.scrobble(artist.get_text(), track.get_text(), unixtimenow)
