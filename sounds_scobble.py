@@ -2,6 +2,7 @@ import configparser
 import datetime
 import getpass
 import time
+import json
 
 import pylast
 import requests
@@ -16,6 +17,23 @@ unixtimenow = time.mktime(now.timetuple())
 config = configparser.ConfigParser()
 web_prompt = Fore.YELLOW + 'URL for BBC Sounds episode to scrobble: '
 pass_prompt = Fore.RED + 'Last.fm password: '
+
+
+def find_tracklist(scripts):
+    for script in soup("script"):
+        text = script.text
+        if 'window.__PRELOADED_STATE__'.lower() in text.lower():
+            return text
+
+
+def find_artists_and_tracks(tracklist_list):
+    artists = []
+    tracks = []
+    for item in tracklist_list:
+        artists.append(item["titles"]["primary"])
+        tracks.append(item["titles"]["secondary"])
+    return artists, tracks
+
 
 if __name__ == "__main__":
 
@@ -41,19 +59,26 @@ if __name__ == "__main__":
 
     soup = BeautifulSoup(page.content, 'html.parser')
 
-    artist_class_string = "sc-u-truncate gel-pica-bold gs-u-mb-- gs-u-pr-alt@m"
-    artists = soup.find_all("p", {"class": artist_class_string})
+    tracklist = find_tracklist(soup)
+    tracklist = tracklist.strip('window.__PRELOADED_STATE__ = ')
+    tracklist_json = json.loads(tracklist[:-1])
+    tracklist_list = tracklist_json["tracklist"]["tracks"]
 
-    track_class_string = "sc-u-truncate gel-long-primer gs-u-pr-alt@m"
-    tracks = soup.find_all("p", {"class": track_class_string})
+    artists, tracks = find_artists_and_tracks(tracklist_list)
+
+    #artist_class_string = "sc-u-truncate gel-pica-bold gs-u-mb-- gs-u-pr-alt@m"
+    #artists = soup.find_all("p", {"class": artist_class_string})
+
+    #track_class_string = "sc-u-truncate gel-long-primer gs-u-pr-alt@m"
+    #tracks = soup.find_all("p", {"class": track_class_string})
 
     for artist, track in zip(artists, tracks):
         scrobble_text = Fore.LIGHTYELLOW_EX + 'Scrobbling: '
-        artist_text = Fore.LIGHTBLUE_EX + artist.get_text()
-        track_text = Fore.LIGHTGREEN_EX + track.get_text() + Style.RESET_ALL
+        artist_text = Fore.LIGHTBLUE_EX + artist
+        track_text = Fore.LIGHTGREEN_EX + track + Style.RESET_ALL
         separator = Fore.LIGHTMAGENTA_EX + " - "
         print(scrobble_text, artist_text, separator, track_text)
-        network.scrobble(artist.get_text(), track.get_text(), unixtimenow)
+        network.scrobble(artist, track, unixtimenow)
 
     print()
     print(Fore.LIGHTRED_EX + "Scrobbling complete")
