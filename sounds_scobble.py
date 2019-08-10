@@ -1,12 +1,12 @@
 import configparser
-import requests
-import time
 import datetime
 import getpass
+import time
 
 import pylast
+import requests
 from bs4 import BeautifulSoup
-from colorama import init, Fore, Style
+from colorama import Fore, Style, init
 
 init()
 
@@ -14,10 +14,8 @@ now = datetime.datetime.now()
 unixtimenow = time.mktime(now.timetuple())
 
 config = configparser.ConfigParser()
-
 web_prompt = Fore.YELLOW + 'URL for BBC Sounds episode to scrobble: '
-pass_prompt = Fore.RED + f'Last.fm password: '
-
+pass_prompt = Fore.RED + 'Last.fm password: '
 
 if __name__ == "__main__":
 
@@ -33,7 +31,8 @@ if __name__ == "__main__":
     print(Style.RESET_ALL)
 
     network = pylast.LastFMNetwork(api_key=API_KEY, api_secret=API_SECRET,
-                                username=username, password_hash=password_hash)
+                                   username=username,
+                                   password_hash=password_hash)
     print(Fore.LIGHTCYAN_EX + webpage)
 
     page = requests.get(str(webpage))
