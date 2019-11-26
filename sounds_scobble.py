@@ -1,15 +1,17 @@
 import configparser
 import datetime
 import getpass
-import time
 import json
+import time
 
-import pylast
 import requests
 from bs4 import BeautifulSoup
 from colorama import Fore, Style, init
 
+import pylast
+
 init()
+
 
 now = datetime.datetime.now()
 unixtimenow = time.mktime(now.timetuple())
@@ -66,11 +68,11 @@ if __name__ == "__main__":
 
     artists, tracks = find_artists_and_tracks(tracklist_list)
 
-    #artist_class_string = "sc-u-truncate gel-pica-bold gs-u-mb-- gs-u-pr-alt@m"
-    #artists = soup.find_all("p", {"class": artist_class_string})
+    # artist_class_string = "sc-u-truncate gel-pica-bold gs-u-mb-- gs-u-pr-alt@m"
+    # artists = soup.find_all("p", {"class": artist_class_string})
 
-    #track_class_string = "sc-u-truncate gel-long-primer gs-u-pr-alt@m"
-    #tracks = soup.find_all("p", {"class": track_class_string})
+    # track_class_string = "sc-u-truncate gel-long-primer gs-u-pr-alt@m"
+    # tracks = soup.find_all("p", {"class": track_class_string})
 
     for artist, track in zip(artists, tracks):
         scrobble_text = Fore.LIGHTYELLOW_EX + 'Scrobbling: '
