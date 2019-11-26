@@ -13,5 +13,4 @@ Then run with python3 and paste url to the episode from BBC Sounds you want to s
 - [ ] Switch from username / password to SessionKeyGenerator
 - [ ] Add command line arguments
 - [ ] Add option to check / correct each track
-- [ ] Add options for estimating / inputing track length
 - [ ] Refactor for proper seperation before / after if name = main

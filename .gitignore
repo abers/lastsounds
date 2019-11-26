@@ -1,3 +1,7 @@
 .details
 *.swp
+<<<<<<< HEAD
 *.ropeproject/
+=======
+.ropeproject/
+>>>>>>> 9a6db12d1fe5067bfdec7ed281364d957959847b
