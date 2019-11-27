@@ -1,16 +1,27 @@
-# lastsounds
-Simple way to scrobble tracks from a BBC Sounds programme to Last.fm
+# Lastsounds
 
-Either use pipenv to install dependencies, or pip install pylast, bs4, and colorama.
+Scrobble tracks from a BBC Sounds episode to Last.fm via the command line. The application takes a URL for a BBC Sounds episode as an argument and scrobbles the tracks assuming the user finished listening at runtime. 
 
-Rename details_config and add an API key & secret along with your username. An API key & secret can be created at www.last.fm/api/account/create. 
+Basic usage -
 
-Then run with python3 and paste url to the episode from BBC Sounds you want to scrobble.
+`python sounds_scrobble.py [OPTIONS] [URL]`
 
-## To do
+**Note**: If Python 3 is not the default on your system you'll need to enter `python3 ...` instead.
 
-- [ ] Add proper README
-- [ ] Switch from username / password to SessionKeyGenerator
-- [ ] Add command line arguments
-- [ ] Add option to check / correct each track
-- [ ] Refactor for proper seperation before / after if name = main
+By default, lastsounds scrobbles all tracks from the episode. To scrobble only a range of tracks, pass the option `--partial` or `-p` when running the command - 
+
+`python sounds_scrobble.py --partial [URL]`
+
+![Example output](screenshots/example.png)
+
+## Dependencies
+
+Lastsounds depends on BeautifulSoup, Click, Requests, Colorama, and pylast.
+
+All dependencies can be installed using [pipenv](https://pipenv.kennethreitz.org/en/latest/) by running `pipenv install` in the git repository.
+
+## Setup
+
+Lastsounds requires an API key & a shared secret that are specific to your account. These can be created [here](www.last.fm/api/account/create). Only the "Application name" field needs to be filled and the rest can be left blank. 
+
+After creating the key and secret, create a copy of `details` and rename it to `.details`. Then add your API key, shared secret, and username to it.

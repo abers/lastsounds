@@ -30,10 +30,23 @@ def get_url():
 
 def get_range():
     """TODO."""
-    first_prompt = Fore.YELLOW + "First track number: "
-    last_prompt = Fore.YELLOW + "Last track number: "
-    first = int(input(first_prompt))
-    last = int(input(last_prompt))
+    first_prompt = Fore.YELLOW + "First track to scrobble: "
+    last_prompt = Fore.YELLOW + "Last track to scrobble: "
+    while True:
+        try:
+            first = int(input(first_prompt))
+        except ValueError:
+            print("Value must be an integer.")
+            continue
+        else:
+            break
+    while True:
+        try:
+            last = int(input(last_prompt))
+        except ValueError:
+            print("Value must be an integer.")
+        else:
+            break
     print()
     return first, last
 
