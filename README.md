@@ -6,7 +6,7 @@ Basic usage -
 
 `python sounds_scrobble.py [OPTIONS] [URL]`
 
-**Note**: If Python 3 is not the default on your system you'll need to enter `python3 ...` instead.
+**Note**: If Python 3 is not the default on your system you'll need to run `python3 ...` instead.
 
 By default, lastsounds scrobbles all tracks from the episode. To scrobble only a range of tracks, pass the option `--partial` or `-p` when running the command - 
 
@@ -24,4 +24,4 @@ All dependencies can be installed using [pipenv](https://pipenv.kennethreitz.org
 
 Lastsounds requires an API key & a shared secret that are specific to your account. These can be created [here](www.last.fm/api/account/create). Only the "Application name" field needs to be filled and the rest can be left blank. 
 
-After creating the key and secret, create a copy of `details` and rename it to `.details`. Then add your API key, shared secret, and username to it.
+After creating the key and secret, create a copy of `details` and rename it to `.details`. Then edit it to add values for your API key, shared secret, and username.
