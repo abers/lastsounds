@@ -8,8 +8,8 @@ bs4 = "*"
 requests = "*"
 pylast = "*"
 colorama = "*"
-pylint = "*"
 pylama = "*"
+click = "*"
 
 [dev-packages]
 

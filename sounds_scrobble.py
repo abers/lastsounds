@@ -1,35 +1,56 @@
+"""TODO."""
 import configparser
 import datetime
 import getpass
 import json
 import time
 
+import click
 import requests
 from bs4 import BeautifulSoup
 from colorama import Fore, Style, init
 
 import pylast
 
-init()
 
-now = datetime.datetime.now()
-unixtime = time.mktime(now.timetuple())
+def get_password_hash():
+    """TODO."""
+    pass_prompt = Fore.RED + "Last.fm password: "
+    password_hash = pylast.md5(getpass.getpass(pass_prompt))
+    print()
+    return password_hash
 
-config = configparser.ConfigParser()
-web_prompt = Fore.YELLOW + "URL for BBC Sounds episode to scrobble: "
-first_prompt = Fore.YELLOW + "First track number: "
-last_prompt = Fore.YELLOW + "Last track number: "
-pass_prompt = Fore.RED + "Last.fm password: "
+
+def get_url():
+    """TODO."""
+    url_prompt = Fore.YELLOW + "URL for BBC Sounds episode to scrobble: "
+    url = input(url_prompt)
+    return url
+
+
+def get_range():
+    """TODO."""
+    first_prompt = Fore.YELLOW + "First track number: "
+    last_prompt = Fore.YELLOW + "Last track number: "
+    first = int(input(first_prompt))
+    last = int(input(last_prompt))
+    print()
+    return first, last
 
 
 def find_tracklist(scripts):
-    for script in soup("script"):
+    """TODO."""
+    for script in scripts("script"):
         text = script.text
         if "window.__PRELOADED_STATE__".lower() in text.lower():
-            return text
+            text = text.strip("window.__PRELOADED_STATE__ = ")
+            tracklist_json = json.loads(text[:-1])
+            tracklist = tracklist_json["tracklist"]["tracks"]
+            return tracklist
 
 
-def find_artists_and_tracks(tracklist_list):
+def find_artists_tracks_lengths(tracklist_list):
+    """TODO."""
     artists = []
     tracks = []
     lengths = []
@@ -40,59 +61,87 @@ def find_artists_and_tracks(tracklist_list):
     return artists, tracks, lengths
 
 
-if __name__ == "__main__":
+def scrobble_tracklist(artists, tracks, lengths, network):
+    """TODO."""
+    now = datetime.datetime.now()
+    unixtime = time.mktime(now.timetuple())
 
+    scrobble_text = Fore.LIGHTYELLOW_EX + "Scrobbling: "
+    separator = Fore.LIGHTMAGENTA_EX + " - "
+
+    def artist_text(artist):
+        return Fore.LIGHTBLUE_EX + artist
+
+    def track_text(track):
+        return Fore.LIGHTGREEN_EX + track + Style.RESET_ALL
+
+    for artist, track, length in zip(artists, tracks, lengths):
+        print(scrobble_text, artist_text(artist), separator, track_text(track))
+        unixtime -= length
+        network.scrobble(artist, track, unixtime)
+    print()
+    print(Fore.LIGHTRED_EX + "Scrobbling complete")
+    print()
+
+
+@click.command()
+# TODO: make optional
+@click.argument("url", default=None, required=False)
+@click.option(
+    "--all-tracks/--partial",
+    "-a/-p",
+    default=True,
+    help="Scrobble all tracks or part of an episode.",
+)
+def main(url, all_tracks):
+    """Scrobble tracks from a BBC Sounds episode to Last.fm."""
+    config = configparser.ConfigParser()
     config.read(".details")
-
-    API_KEY = config["API"]["API_KEY"]
-    API_SECRET = config["API"]["API_SECRET"]
-    username = " "
+    api_key = config["API"]["api_key"]
+    api_secret = config["API"]["api_secret"]
     username = config["LOGIN"]["username"]
 
-    webpage = input(web_prompt)
-    first = int(input(first_prompt))
-    last = int(input(last_prompt))
+    if url is None:
+        url = get_url()
 
-    password_hash = pylast.md5(getpass.getpass(pass_prompt))
+    if not all:
+        first, last = get_range()
+
+    # TODO: Replace with function to test URL
+    # TODO: If succesful print Scrobbling programme_title
+
     print(Style.RESET_ALL)
-
-    network = pylast.LastFMNetwork(
-        api_key=API_KEY,
-        api_secret=API_SECRET,
-        username=username,
-        password_hash=password_hash,
-    )
-    print(Fore.LIGHTCYAN_EX + webpage)
-
-    page = requests.get(str(webpage))
+    print(Fore.LIGHTCYAN_EX + url)
+    page = requests.get(str(url))
     print(page)
     print()
 
     soup = BeautifulSoup(page.content, "html.parser")
 
     tracklist = find_tracklist(soup)
-    tracklist = tracklist.strip("window.__PRELOADED_STATE__ = ")
-    tracklist_json = json.loads(tracklist[:-1])
-    tracklist_list = tracklist_json["tracklist"]["tracks"]
 
-    artists, tracks, lengths = find_artists_and_tracks(
-        tracklist_list[first - 1 : last][::-1]
+    if not all_tracks:
+        first, last = get_range()
+        tracklist = tracklist[first - 1 : last]
+
+    # TODO: Sort tracklist
+    tracklist = tracklist[::-1]
+
+    artists, tracks, lengths = find_artists_tracks_lengths(tracklist)
+
+    # TODO: Replace with pylast authentication class.
+    password_hash = get_password_hash()
+    network = pylast.LastFMNetwork(
+        api_key=api_key,
+        api_secret=api_secret,
+        username=username,
+        password_hash=password_hash,
     )
 
-    # artist_class_string = "sc-u-truncate gel-pica-bold gs-u-mb-- gs-u-pr-alt@m"
-    # artists = soup.find_all("p", {"class": artist_class_string})
-    # track_class_string = "sc-u-truncate gel-long-primer gs-u-pr-alt@m"
-    # tracks = soup.find_all("p", {"class": track_class_string})
+    scrobble_tracklist(artists, tracks, lengths, network)
 
-    for artist, track, length in zip(artists, tracks, lengths):
-        scrobble_text = Fore.LIGHTYELLOW_EX + "Scrobbling: "
-        artist_text = Fore.LIGHTBLUE_EX + artist
-        track_text = Fore.LIGHTGREEN_EX + track + Style.RESET_ALL
-        separator = Fore.LIGHTMAGENTA_EX + " - "
-        print(scrobble_text, artist_text, separator, track_text)
-        unixtime -= length
-        network.scrobble(artist, track, unixtime)
 
-    print()
-    print(Fore.LIGHTRED_EX + "Scrobbling complete")
-    print()
+if __name__ == "__main__":
+
+    init()
+    main()
