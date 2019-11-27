@@ -39,7 +39,8 @@ def get_range():
 
 
 def find_tracklist(scripts):
-    """TODO."""
+    """TODO.
+    May need to split into check_tracklist and find_tracklist."""
     for script in scripts("script"):
         text = script.text
         if "window.__PRELOADED_STATE__".lower() in text.lower():
@@ -104,12 +105,13 @@ def main(url, all_tracks):
     if url is None:
         url = get_url()
 
+    # TODO: Check URL - including if None input then quit application
+    # TODO: If succesful print Scrobbling programme_title
+
     if not all:
         first, last = get_range()
 
-    # TODO: Replace with function to test URL
-    # TODO: If succesful print Scrobbling programme_title
-
+    # TODO: Move below chunk into a function
     print(Style.RESET_ALL)
     print(Fore.LIGHTCYAN_EX + url)
     page = requests.get(str(url))
