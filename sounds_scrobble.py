@@ -46,7 +46,7 @@ def find_tracklist(scripts):
             text = text.strip("window.__PRELOADED_STATE__ = ")
             tracklist_json = json.loads(text[:-1])
             tracklist = tracklist_json["tracklist"]["tracks"]
-            return tracklist
+    return tracklist
 
 
 def find_artists_tracks_lengths(tracklist_list):
