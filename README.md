@@ -22,6 +22,6 @@ All dependencies can be installed using [pipenv](https://pipenv.kennethreitz.org
 
 ## Setup
 
-Lastsounds requires an API key & a shared secret that are specific to your account. These can be created [here](www.last.fm/api/account/create). Only the "Application name" field needs to be filled and the rest can be left blank. 
+Lastsounds requires an API key & a shared secret that are specific to your account. These can be created [here](https://www.last.fm/api/account/create). Only the "Application name" field needs to be filled and the rest can be left blank. 
 
 After creating the key and secret, create a copy of `details` and rename it to `.details`. Then edit it to add values for your API key, shared secret, and username.
